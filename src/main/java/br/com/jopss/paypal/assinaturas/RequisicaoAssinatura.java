@@ -1,20 +1,13 @@
 package br.com.jopss.paypal.assinaturas;
 
-import br.com.jopss.pagseguro.assinaturas.exception.AutorizacaoInvalidaException;
-import br.com.jopss.pagseguro.assinaturas.exception.ConfiguracaoInvalidaException;
-import br.com.jopss.pagseguro.assinaturas.exception.ErrosRemotosPagSeguroException;
-import br.com.jopss.pagseguro.assinaturas.exception.ProblemaGenericoAPIException;
-import br.com.jopss.pagseguro.assinaturas.modelos.EnvioCobranca;
-import br.com.jopss.pagseguro.assinaturas.modelos.EnvioPreRequisicao;
-import br.com.jopss.pagseguro.assinaturas.modelos.EnvioPreRequisicaoCheckout;
-import br.com.jopss.pagseguro.assinaturas.modelos.RespostaCancelamento;
-import br.com.jopss.pagseguro.assinaturas.modelos.RespostaCobranca;
-import br.com.jopss.pagseguro.assinaturas.modelos.RespostaPreAprovacao;
-import br.com.jopss.pagseguro.assinaturas.modelos.RespostaPreAprovacaoCheckout;
-import br.com.jopss.pagseguro.assinaturas.util.APIConfigSingleton;
-import br.com.jopss.pagseguro.assinaturas.util.AcessoPayPal;
-import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
+import br.com.jopss.paypal.assinaturas.exception.AutorizacaoInvalidaException;
+import br.com.jopss.paypal.assinaturas.exception.ConfiguracaoInvalidaException;
+import br.com.jopss.paypal.assinaturas.exception.ErrosRemotosPayPalException;
+import br.com.jopss.paypal.assinaturas.exception.ProblemaGenericoAPIException;
+import br.com.jopss.paypal.assinaturas.modelos.EnvioPreAprovacao;
+import br.com.jopss.paypal.assinaturas.modelos.RespostaPreAprovacao;
+import br.com.jopss.paypal.assinaturas.util.APIConfigSingleton;
+import br.com.jopss.paypal.assinaturas.util.AcessoPayPal;
 
 /**
  * Classe de serviço para acessos a registro de assinaturas.
@@ -33,14 +26,14 @@ public final class RequisicaoAssinatura {
          * 
 	 * Com o código retornado em mãos, podemos efetivar a autorização redirecionando para a página de pagamento.
 	 * 
-	 * @param preRequisicao EnvioPreRequisicao com os dados da assinatura e do cliente.
-	 * @return {@link br.com.jopss.pagseguro.assinaturas.modelos.RespostaPreAprovacao} resposta com código do cliente e data, para iniciar fluxo de pagamento.
-	 * @throws br.com.jopss.pagseguro.assinaturas.exception.ProblemaGenericoAPIException
-	 * @throws br.com.jopss.pagseguro.assinaturas.exception.ErrosRemotosPagSeguroException
-	 * @throws br.com.jopss.pagseguro.assinaturas.exception.ConfiguracaoInvalidaException
-	 * @throws br.com.jopss.pagseguro.assinaturas.exception.AutorizacaoInvalidaException
+	 * @param preRequisicao EnvioPreAprovacao com os dados da assinatura e do cliente.
+	 * @return {@link br.com.jopss.paypal.assinaturas.modelos.RespostaPreAprovacao} resposta com código do cliente e data, para iniciar fluxo de pagamento.
+	 * @throws br.com.jopss.paypal.assinaturas.exception.ProblemaGenericoAPIException
+	 * @throws br.com.jopss.paypal.assinaturas.exception.ErrosRemotosPayPalException
+	 * @throws br.com.jopss.paypal.assinaturas.exception.ConfiguracaoInvalidaException
+	 * @throws br.com.jopss.paypal.assinaturas.exception.AutorizacaoInvalidaException
 	 */
-	public RespostaPreAprovacao preAprovacao(EnvioPreRequisicao preRequisicao) throws ProblemaGenericoAPIException, ErrosRemotosPagSeguroException, ConfiguracaoInvalidaException, AutorizacaoInvalidaException {
+	public RespostaPreAprovacao preAprovacao(EnvioPreAprovacao preRequisicao) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, ConfiguracaoInvalidaException, AutorizacaoInvalidaException {
 		return new AcessoPayPal().acessoPOST( APIConfigSingleton.get().getUrlPreAprovacao(), RespostaPreAprovacao.class, preRequisicao );
 	}
         

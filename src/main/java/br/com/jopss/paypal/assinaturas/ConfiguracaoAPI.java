@@ -1,6 +1,6 @@
 package br.com.jopss.paypal.assinaturas;
 
-import br.com.jopss.pagseguro.assinaturas.util.APIConfigSingleton;
+import br.com.jopss.paypal.assinaturas.util.APIConfigSingleton;
 
 /**
  * Disponibiliza itens de configurações, como métodos para indicar o email e token da sua conta empresarial, url´s, charset, proxy, etc.
@@ -22,6 +22,11 @@ public final class ConfiguracaoAPI {
 	 */
 	public ConfiguracaoAPI setId(String id) {
 		APIConfigSingleton.get().setId(id);
+		return this;
+	}
+
+        public ConfiguracaoAPI setSecret(String secret) {
+		APIConfigSingleton.get().setSecret(secret);
 		return this;
 	}
 
