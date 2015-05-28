@@ -42,6 +42,11 @@ public class RespostaPreAprovacao extends EnvioPreAprovacao implements RespostaP
 	public RespostaPreAprovacao() {
 	}
         
+        @Override
+        public boolean isValido() {
+                return this.id!=null && !this.id.trim().equalsIgnoreCase("");
+        }
+        
         public String getId() {
                 return id;
         }

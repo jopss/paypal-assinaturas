@@ -1,60 +1,76 @@
 package br.com.jopss.paypal.assinaturas.modelos;
 
 import br.com.jopss.paypal.assinaturas.modelos.interfaces.RespostaPayPal;
-import java.util.HashSet;
-import java.util.Set;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Classe de resposta de erros do PagSeguro.
- * 
+ *
  * @author João Paulo Sossoloti.
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "errors")
+@XmlRootElement
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, setterVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE)
 public class ErrosPagSeguro implements RespostaPayPal {
-	
-	@XmlElement(name = "error")
-	private Set<Erro> erros = new HashSet<>();
 
-	public Set<Erro> getErros() {
-		return erros;
-	}
+        @JsonProperty("name")
+        private String nome;
 
-	@XmlAccessorType(XmlAccessType.FIELD)
-	@XmlRootElement(name = "error")
-	public static class Erro{
-		
-		@XmlElement(name = "code")
-		private Integer codigo;
-		
-		@XmlElement(name = "message")
-		private String mensagem;
-		
-		public String getCodigoEMensagem(){
-			return codigo+" - "+mensagem;
-		}
+        @JsonProperty("error")
+        private String erro;
+        
+        @JsonProperty("error_description")
+        private String descricaoErro;
+        
+        @JsonProperty("message")
+        private String mensagem;
 
-		public Integer getCodigo() {
-			return codigo;
-		}
+        @JsonProperty("information_link")
+        private String link;
 
-		public String getMensagem() {
-			return mensagem;
-		}
+        @JsonProperty("details")
+	private String detalhes;
 
-		@Override
-		public String toString() {
-			return "Erro{" + "codigo=" + codigo + ", mensagem=" + mensagem + '}';
-		}
-	}
+        @Override
+        public boolean isValido() {
+                return true;
+        }
 
-	@Override
-	public String toString() {
-		return "ErrosPagSeguro{" + "erros=" + erros + '}';
-	}
-	
+        public String getNomeCompleto() {
+                String txt = "Retorno da interligação de pagamento: "+getNome() + ". "+getMensagem();
+                if(detalhes!=null){
+                       txt = txt+" - "+detalhes;
+                }
+                txt = txt+". Por favor, tente novamente ou procure suporte.";
+                return txt;
+        }
+        
+        public String getNome() {
+                if(nome == null){
+                        return erro;
+                }
+                return nome;
+        }
+
+        public String getMensagem() {
+                if(mensagem == null){
+                        return descricaoErro;
+                }
+                return mensagem;
+        }
+
+        public String getLink() {
+                return link;
+        }
+
+        public String getDetalhes() {
+                return detalhes;
+        }
+
+        @Override
+        public String toString() {
+                return "Erro{" + "nome=" + nome + ", mensagem=" + mensagem + '}';
+        }
+
 }

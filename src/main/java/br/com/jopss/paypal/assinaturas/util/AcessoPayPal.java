@@ -4,6 +4,7 @@ import br.com.jopss.paypal.assinaturas.exception.AutorizacaoInvalidaException;
 import br.com.jopss.paypal.assinaturas.exception.ConfiguracaoInvalidaException;
 import br.com.jopss.paypal.assinaturas.exception.ErrosRemotosPayPalException;
 import br.com.jopss.paypal.assinaturas.exception.ProblemaGenericoAPIException;
+import br.com.jopss.paypal.assinaturas.modelos.ErrosPagSeguro;
 import br.com.jopss.paypal.assinaturas.modelos.interfaces.EnvioPayPal;
 import br.com.jopss.paypal.assinaturas.modelos.interfaces.RespostaPayPal;
 import java.io.BufferedReader;
@@ -43,8 +44,9 @@ public final class AcessoPayPal {
                         URL url = new URL(sUrl + (StringUtils.isNotBlank(requestQuery) ? requestQuery : ""));
 
                         HttpURLConnection conn = null;
-                        if (APIConfigSingleton.get().proxyConfigurado() && !gerarToken) {
+                        if (APIConfigSingleton.get().proxyConfigurado()) {
                                 Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(APIConfigSingleton.get().getProxyURI(), APIConfigSingleton.get().getProxyPorta()));
+                                
                                 Authenticator authenticator = new Authenticator() {
                                         @Override
                                         public PasswordAuthentication getPasswordAuthentication() {
@@ -61,25 +63,12 @@ public final class AcessoPayPal {
                         conn.setUseCaches(false);
 
                         if (gerarToken) {
-                                conn.setRequestProperty("Authorization", "Basic " + APIConfigSingleton.get().getId() + ":" + APIConfigSingleton.get().getSecret());
                                 conn.setRequestProperty("Accept", "application/json");
-                                conn = (HttpURLConnection) url.openConnection();
+                                conn.setRequestProperty("Authorization", "Basic " + APIConfigSingleton.get().getId() + ":" + APIConfigSingleton.get().getSecret());
+                                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                         } else {
                                 conn.setRequestProperty("Authorization", "Bearer " + APIConfigSingleton.get().getToken());
                                 conn.setRequestProperty("Content-Type", "application/json; charset=" + APIConfigSingleton.get().getCharset());
-
-                                if (APIConfigSingleton.get().proxyConfigurado()) {
-                                        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(APIConfigSingleton.get().getProxyURI(), APIConfigSingleton.get().getProxyPorta()));
-                                        Authenticator authenticator = new Authenticator() {
-                                                @Override
-                                                public PasswordAuthentication getPasswordAuthentication() {
-                                                        return (new PasswordAuthentication(APIConfigSingleton.get().getProxyUsuario(),
-                                                                APIConfigSingleton.get().getProxySenha().toCharArray()));
-                                                }
-                                        };
-                                        Authenticator.setDefault(authenticator);
-                                        conn = (HttpURLConnection) url.openConnection(proxy);
-                                }
                         }
 
                         OutputStreamWriter writer = null;
@@ -128,12 +117,10 @@ public final class AcessoPayPal {
                                 throw new ProblemaGenericoAPIException("Sem acesso ao PayPal. O sistema por estar fora do ar. Verifique a URL ou tente novamente mais tarde. Tentativa em: '" + url + "'");
                         }
 
-//                        if(!resp.isValido()){
-//				if(resp.isTokenExpirado()){
-//					throw new TokenExpiradoException(resp.getCodigoMensagem(), resp.getMensagem());
-//				}
-//				throw new ValidacaoRespostaRemotaException(resp.getCodigoMensagem(), resp.getMensagem());
-//			}
+                        if(!resp.isValido()){
+                                ErrosPagSeguro erros = JSonUtil.getObject(json, ErrosPagSeguro.class);
+				throw new ErrosRemotosPayPalException(erros);
+			}
                         return (T) resp;
 
                 } catch (ConfiguracaoInvalidaException | IOException ex) {

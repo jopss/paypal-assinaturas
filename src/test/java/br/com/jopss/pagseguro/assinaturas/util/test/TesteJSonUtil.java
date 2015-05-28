@@ -2,6 +2,7 @@ package br.com.jopss.pagseguro.assinaturas.util.test;
 
 import br.com.jopss.paypal.assinaturas.exception.ProblemaGenericoAPIException;
 import br.com.jopss.paypal.assinaturas.modelos.EnvioPreAprovacao;
+import br.com.jopss.paypal.assinaturas.modelos.ErrosPagSeguro;
 import br.com.jopss.paypal.assinaturas.modelos.RespostaPreAprovacao;
 import br.com.jopss.paypal.assinaturas.modelos.enums.Moeda;
 import br.com.jopss.paypal.assinaturas.modelos.enums.Periodo;
@@ -46,4 +47,12 @@ public class TesteJSonUtil {
 		RespostaPreAprovacao resposta = JSonUtil.getObject(json, RespostaPreAprovacao.class);
 		assertNotNull(resposta);
 	}
+        
+	@Test
+	public void jsonRespostaComErroParaObjeto() throws ProblemaGenericoAPIException{
+		String json = "{\"name\":\"{ERROR NAME}\",\"message\":\"{Error description}\",\"information_link\":\"{Link to error documentation}\",\"details\":\"[Additional details about the error]\"}";
+		ErrosPagSeguro erros = JSonUtil.getObject(json, ErrosPagSeguro.class);
+		assertNotNull(erros);
+	}
+        
 }

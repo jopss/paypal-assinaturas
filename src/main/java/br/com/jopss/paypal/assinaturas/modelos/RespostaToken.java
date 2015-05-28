@@ -34,7 +34,12 @@ public class RespostaToken implements RespostaPayPal {
 	 */
 	public RespostaToken() {
 	}
-
+        
+        @Override
+        public boolean isValido() {
+                return this.token!=null && !this.token.trim().equalsIgnoreCase("");
+        }
+        
         public String getEscopo() {
                 return escopo;
         }
@@ -55,6 +60,5 @@ public class RespostaToken implements RespostaPayPal {
                 if(expiraEm == null) return null;
                 return Long.parseLong(expiraEm);
         }
-        
         
 }

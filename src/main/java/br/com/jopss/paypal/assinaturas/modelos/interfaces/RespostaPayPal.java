@@ -8,4 +8,5 @@ import java.io.Serializable;
  * @author João Paulo Sossoloti.
  */
 public interface RespostaPayPal extends Serializable {
+        public boolean isValido();
 }
