@@ -18,6 +18,7 @@ import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -64,7 +65,7 @@ public final class AcessoPayPal {
 
                         if (gerarToken) {
                                 conn.setRequestProperty("Accept", "application/json");
-                                conn.setRequestProperty("Authorization", "Basic " + APIConfigSingleton.get().getId() + ":" + APIConfigSingleton.get().getSecret());
+                                conn.setRequestProperty("Authorization", "Basic " + Base64.encodeBase64String( (APIConfigSingleton.get().getId() + ":" + APIConfigSingleton.get().getSecret()).getBytes() ) );
                                 conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                         } else {
                                 conn.setRequestProperty("Authorization", "Bearer " + APIConfigSingleton.get().getToken());
