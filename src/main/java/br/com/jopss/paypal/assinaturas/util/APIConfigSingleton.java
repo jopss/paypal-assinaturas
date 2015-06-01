@@ -61,8 +61,16 @@ public final class APIConfigSingleton {
 		return "https://api.paypal.com/v1/payments/billing-plans";
 	}
 	
-        private String getDefaultUrlFaturamento(){
+        private String getDefaultUrlContrato(){
 		return "https://api.paypal.com/v1/payments/billing-agreements";
+	}
+        
+        private String getDefaultUrlAtivamento(){
+		return "https://api.paypal.com/v1/payments/billing-plans/{dado}";
+	}
+        
+        private String getDefaultUrlFaturamento(){
+		return "https://api.paypal.com/v1/payments/billing-agreements/{dado}/agreement-execute";
 	}
         
 	public boolean proxyConfigurado(){
@@ -173,7 +181,30 @@ public final class APIConfigSingleton {
 		return urlPreAprovacao;
 	}
         
-	public String getUrlFaturamento() throws ConfiguracaoInvalidaException {
+	public String getUrlContrato() throws ConfiguracaoInvalidaException {
+		String urlContrato = this.getDefaultUrlContrato();
+		if (StringUtils.isBlank(urlContrato)) {
+			throw new ConfiguracaoInvalidaException("Configuração: urlContrato obrigatório.");
+		}
+		if(APIConfigSingleton.get().isTeste()){
+			urlContrato = urlContrato.replaceAll("api.paypal.com", "api.sandbox.paypal.com");
+		}
+		return urlContrato;
+	}
+        
+	public String getUrlAtivamento(String id) throws ConfiguracaoInvalidaException {
+		String urlAtivamento = this.getDefaultUrlAtivamento();
+		if (StringUtils.isBlank(urlAtivamento)) {
+			throw new ConfiguracaoInvalidaException("Configuração: urlAtivamento obrigatório.");
+		}
+		if(APIConfigSingleton.get().isTeste()){
+			urlAtivamento = urlAtivamento.replaceAll("api.paypal.com", "api.sandbox.paypal.com");
+		}
+                urlAtivamento = urlAtivamento.replaceAll("\\{dado\\}", id);
+		return urlAtivamento;
+	}
+        
+	public String getUrlFaturamento(String id) throws ConfiguracaoInvalidaException {
 		String urlFaturamento = this.getDefaultUrlFaturamento();
 		if (StringUtils.isBlank(urlFaturamento)) {
 			throw new ConfiguracaoInvalidaException("Configuração: urlFaturamento obrigatório.");
@@ -181,6 +212,7 @@ public final class APIConfigSingleton {
 		if(APIConfigSingleton.get().isTeste()){
 			urlFaturamento = urlFaturamento.replaceAll("api.paypal.com", "api.sandbox.paypal.com");
 		}
+                urlFaturamento = urlFaturamento.replaceAll("\\{dado\\}", id);
 		return urlFaturamento;
 	}
         

@@ -2,6 +2,7 @@ package br.com.jopss.paypal.assinaturas.modelos.suporte;
 
 import br.com.jopss.paypal.assinaturas.modelos.enums.Moeda;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -12,6 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, setterVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PreferenciasComerciais {
 	
 	@JsonProperty("return_url")
@@ -19,9 +21,6 @@ public class PreferenciasComerciais {
 	
 	@JsonProperty("cancel_url")
 	private String urlCancelar;
-        
-	@JsonProperty("notify_url")
-	private String urlNotificacao;
         
 	@JsonProperty("auto_bill_amount")
 	private String pagamentoRecorrente;
@@ -51,10 +50,6 @@ public class PreferenciasComerciais {
 
         public void setUrlCancelar(String urlCancelar) {
                 this.urlCancelar = urlCancelar;
-        }
-
-        public void setUrlNotificacao(String urlNotificacao) {
-                this.urlNotificacao = urlNotificacao;
         }
 
         public void setQtdMaximaTentativas(Integer qtdMaximaTentativas) {

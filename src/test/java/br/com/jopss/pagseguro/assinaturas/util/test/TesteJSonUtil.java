@@ -28,7 +28,6 @@ public class TesteJSonUtil {
                 preferencias.setContinuarAcaoAoFalharPagamentoInicial(false);
                 preferencias.setQtdMaximaTentativas(0);
                 preferencias.setUrlCancelar("http://www.cancel.com");
-                preferencias.setUrlNotificacao("http://www.notification.com");
                 preferencias.setUrlRetorno("http://www.return.com");
                 preferencias.setValorInicialDiferenciado(123.66, Moeda.BRL);
                 
@@ -50,7 +49,7 @@ public class TesteJSonUtil {
         
 	@Test
 	public void jsonRespostaComErroParaObjeto() throws ProblemaGenericoAPIException{
-		String json = "{\"name\":\"{ERROR NAME}\",\"message\":\"{Error description}\",\"information_link\":\"{Link to error documentation}\",\"details\":\"[Additional details about the error]\"}";
+		String json = "{\"name\":\"{ERROR NAME}\",\"message\":\"{Error description}\",\"information_link\":\"{Link to error documentation}\",\"details\":[{\"field\": \"merchant_preferences.notify_url\",\"issue\": \"Not valid to specify this field in a request\"}]}";
 		ErrosPagSeguro erros = JSonUtil.getObject(json, ErrosPagSeguro.class);
 		assertNotNull(erros);
 	}

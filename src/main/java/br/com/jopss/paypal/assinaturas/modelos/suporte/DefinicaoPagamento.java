@@ -4,8 +4,11 @@ import br.com.jopss.paypal.assinaturas.modelos.enums.Moeda;
 import br.com.jopss.paypal.assinaturas.modelos.enums.Periodo;
 import br.com.jopss.paypal.assinaturas.modelos.enums.TipoPagamento;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -14,6 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, setterVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DefinicaoPagamento {
 	
         @JsonProperty("id")
@@ -36,6 +40,9 @@ public class DefinicaoPagamento {
 
         @JsonProperty("amount")
 	private Valor valor;
+        
+        @JsonProperty("charge_models")
+        private Set<String> modo = new HashSet<>();
         
         public DefinicaoPagamento() {}
         
@@ -81,12 +88,12 @@ public class DefinicaoPagamento {
 
         public TipoPagamento getTipo() {
                 if(tipo == null) return null;
-                return TipoPagamento.valueOf(tipo);
+                return TipoPagamento.valueOf(tipo.toUpperCase());
         }
 
         public Periodo getFrequencia() {
                 if(frequencia == null) return null;
-                return Periodo.valueOf(frequencia);
+                return Periodo.valueOf(frequencia.toUpperCase());
         }
 
         public Integer getIntervaloFrequencia() {

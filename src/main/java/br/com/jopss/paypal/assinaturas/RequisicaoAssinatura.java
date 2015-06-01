@@ -4,7 +4,12 @@ import br.com.jopss.paypal.assinaturas.exception.AutorizacaoInvalidaException;
 import br.com.jopss.paypal.assinaturas.exception.ConfiguracaoInvalidaException;
 import br.com.jopss.paypal.assinaturas.exception.ErrosRemotosPayPalException;
 import br.com.jopss.paypal.assinaturas.exception.ProblemaGenericoAPIException;
+import br.com.jopss.paypal.assinaturas.modelos.EnvioAtivacao;
+import br.com.jopss.paypal.assinaturas.modelos.EnvioContrato;
 import br.com.jopss.paypal.assinaturas.modelos.EnvioPreAprovacao;
+import br.com.jopss.paypal.assinaturas.modelos.RespostaContrato;
+import br.com.jopss.paypal.assinaturas.modelos.RespostaFaturamento;
+import br.com.jopss.paypal.assinaturas.modelos.RespostaOK;
 import br.com.jopss.paypal.assinaturas.modelos.RespostaPreAprovacao;
 import br.com.jopss.paypal.assinaturas.util.APIConfigSingleton;
 import br.com.jopss.paypal.assinaturas.util.AcessoPayPal;
@@ -35,6 +40,18 @@ public final class RequisicaoAssinatura {
 	 */
 	public RespostaPreAprovacao preAprovacao(EnvioPreAprovacao preRequisicao) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, ConfiguracaoInvalidaException, AutorizacaoInvalidaException {
 		return new AcessoPayPal().acessoPOST( APIConfigSingleton.get().getUrlPreAprovacao(), RespostaPreAprovacao.class, preRequisicao );
+	}
+        
+        public RespostaOK ativarAprovacao(EnvioAtivacao envioAtivacao, RespostaPreAprovacao respostaPreAprovacao) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, ConfiguracaoInvalidaException, AutorizacaoInvalidaException {
+		return new AcessoPayPal().acessoPATCH( APIConfigSingleton.get().getUrlAtivamento(respostaPreAprovacao.getId()), RespostaOK.class, envioAtivacao );
+	}
+        
+        public RespostaContrato contrato(EnvioContrato envioContrato) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, ConfiguracaoInvalidaException, AutorizacaoInvalidaException {
+		return new AcessoPayPal().acessoPOST( APIConfigSingleton.get().getUrlContrato(), RespostaContrato.class, envioContrato );
+	}
+        
+        public RespostaFaturamento faturamento(RespostaContrato respostaContrato) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, ConfiguracaoInvalidaException, AutorizacaoInvalidaException {
+		return new AcessoPayPal().acessoPOST( APIConfigSingleton.get().getUrlFaturamento(respostaContrato.getId()), RespostaFaturamento.class );
 	}
         
 }

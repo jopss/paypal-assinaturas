@@ -1,8 +1,8 @@
 package br.com.jopss.paypal.assinaturas.modelos;
 
-import br.com.jopss.paypal.assinaturas.modelos.enums.SituacaoFaturamento;
 import br.com.jopss.paypal.assinaturas.modelos.interfaces.RespostaPayPal;
 import br.com.jopss.paypal.assinaturas.modelos.suporte.AtomLink;
+import br.com.jopss.paypal.assinaturas.modelos.suporte.Plano;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, setterVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE)
-public class RespostaPreAprovacao extends EnvioPreAprovacao implements RespostaPayPal {
+public class RespostaContrato implements RespostaPayPal {
 	
         @JsonIgnore
         private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
@@ -28,51 +28,54 @@ public class RespostaPreAprovacao extends EnvioPreAprovacao implements RespostaP
         @JsonProperty("id")
 	private String id;
         
-        @JsonProperty("create_time")
-	private String dataCriacao;
-        
-	@JsonProperty("state")
-	private String situacao;
-        
-        @JsonProperty("update_time")
-	private String dataAtualizacao;
+        @JsonProperty("name")
+	private String nome;
+	
+        @JsonProperty("description")
+	private String descricao;
 
+        @JsonProperty("start_date")
+	private String dataInicioPagamento;
+        
+        @JsonProperty("plan")
+        private Plano plano;
+        
         @JsonProperty("links")
 	private final Set<AtomLink> acoes = new HashSet<>();
         
 	/**
 	 * Construtor vazio necessario para formatacao automatica.
 	 */
-	public RespostaPreAprovacao() {
+	public RespostaContrato() {
 	}
         
         @Override
         public boolean isValido() {
-                return this.id!=null && !this.id.trim().equalsIgnoreCase("");
+                return this.plano!=null && this.plano.getId()!=null && !this.plano.getId().trim().equalsIgnoreCase("");
         }
         
+        public Date getDataInicioPagamento() {
+                try {
+                        return dateFormat.parse(dataInicioPagamento);
+                } catch (ParseException ex) {
+                        throw new RuntimeException(ex);
+                }
+        }
+
         public String getId() {
                 return id;
         }
 
-        public Date getDataCriacao() {
-                try {
-                        return dateFormat.parse(dataCriacao);
-                } catch (ParseException ex) {
-                        throw new RuntimeException(ex);
-                }
+        public String getNome() {
+                return nome;
         }
 
-        public Date getDataAtualizacao() {
-                try {
-                        return dateFormat.parse(dataAtualizacao);
-                } catch (ParseException ex) {
-                        throw new RuntimeException(ex);
-                }
+        public String getDescricao() {
+                return descricao;
+        }
+
+        public Plano getPlano() {
+                return plano;
         }
         
-        public SituacaoFaturamento getSituacao() {
-                if(situacao == null) return null;
-                return SituacaoFaturamento.valueOf(situacao.toUpperCase());
-        }
 }
