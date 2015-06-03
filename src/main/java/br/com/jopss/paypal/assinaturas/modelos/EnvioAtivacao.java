@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import java.util.HashSet;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -21,55 +23,34 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JsonInclude(Include.NON_NULL)
 public class EnvioAtivacao implements EnvioPayPal {
 	
-        @JsonProperty("")
-	private Set<Ativacao> ativacoes = new HashSet<>();
-        
-	/**
-	 * Construtor vazio necessario para formatacao automatica.
-	 */
-	public EnvioAtivacao() {
-	}
-        
-        public EnvioAtivacao(SituacaoFaturamento situacaoFaturamento) {
-                ativacoes.add(new Ativacao(situacaoFaturamento));
-	}
+        @JsonProperty("path")
+        private String path;
 
-        public Set<Ativacao> getAtivacoes() {
-                return ativacoes;
+        @JsonProperty("value")
+        private ValorAtivacao valorAtivacao;
+
+        @JsonProperty("op")
+        private String operacao;
+
+        public EnvioAtivacao() {
         }
-        
-        public static class Ativacao{
-                
-                @JsonProperty("path")
-                private String path;
-                
-                @JsonProperty("value")
-                private ValorAtivacao valorAtivacao;
-                
-                @JsonProperty("op")
-                private String operacao;
-                
-                public Ativacao() {
-                }
 
-                public Ativacao(SituacaoFaturamento situacaoFaturamento) {
-                        this.path = "/";
-                        this.operacao = "replace";
-                        this.valorAtivacao = new ValorAtivacao(situacaoFaturamento);
-                }
+        public EnvioAtivacao(SituacaoFaturamento situacaoFaturamento) {
+                this.path = "/";
+                this.operacao = "replace";
+                this.valorAtivacao = new ValorAtivacao(situacaoFaturamento);
+        }
 
-                public String getPath() {
-                        return path;
-                }
+        public String getPath() {
+                return path;
+        }
 
-                public ValorAtivacao getValorAtivacao() {
-                        return valorAtivacao;
-                }
+        public ValorAtivacao getValorAtivacao() {
+                return valorAtivacao;
+        }
 
-                public String getOperacao() {
-                        return operacao;
-                }
-                
+        public String getOperacao() {
+                return operacao;
         }
 
         public static class ValorAtivacao{

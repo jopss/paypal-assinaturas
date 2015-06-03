@@ -3,7 +3,7 @@ package br.com.jopss.paypal.assinaturas.util;
 import br.com.jopss.paypal.assinaturas.exception.AutorizacaoInvalidaException;
 import br.com.jopss.paypal.assinaturas.exception.ErrosRemotosPayPalException;
 import br.com.jopss.paypal.assinaturas.exception.ProblemaGenericoAPIException;
-import br.com.jopss.paypal.assinaturas.modelos.ErrosPagSeguro;
+import br.com.jopss.paypal.assinaturas.modelos.ErroPayPal;
 import br.com.jopss.paypal.assinaturas.modelos.interfaces.EnvioPayPal;
 import br.com.jopss.paypal.assinaturas.modelos.interfaces.RespostaPayPal;
 import java.io.BufferedReader;
@@ -17,28 +17,31 @@ import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
+import java.security.cert.CertificateException;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocket;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import java.security.cert.X509Certificate;
+import java.util.Map;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.conn.ssl.TrustStrategy;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
-import org.apache.http.entity.SerializableEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import org.apache.http.config.Registry;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
  * Classe utilitária para acessos HTTP (GET ou POST).
@@ -46,28 +49,37 @@ import org.apache.http.config.Registry;
  * @author João Paulo Sossoloti.
  */
 public class AcessoPayPal {
-
+        
         public <T> T acessoGET(String sUrl, Class<? extends RespostaPayPal> clazz) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, AutorizacaoInvalidaException {
-                return this.acessarURL(sUrl, null, clazz, TipoAcessoPayPal.GET, null, false, true);
+                return this.acessarURL(sUrl, null, clazz, TipoAcessoPayPal.GET, null, false, true, false);
         }
 
         public <T> T acessoPOST(String sUrl, Class<? extends RespostaPayPal> clazz) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, AutorizacaoInvalidaException {
                 return this.acessoPOST(sUrl, clazz, null);
         }
-
-        public <T> T acessoPOST(String sUrl, Class<? extends RespostaPayPal> clazz, EnvioPayPal envio) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, AutorizacaoInvalidaException {
-                return this.acessarURL(sUrl, null, clazz, TipoAcessoPayPal.POST, envio != null ? JSonUtil.getJSon(envio) : null, false, true);
+        
+        public String acessoPOSTComRequisicao(String sUrl, Map<String,String> valoresRequisicao) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, AutorizacaoInvalidaException {
+                StringBuilder str = new StringBuilder();
+                for(String chave : valoresRequisicao.keySet()){
+                        String valor = valoresRequisicao.get(chave);
+                        str.append("&"+chave+"="+valor);
+                }
+                return this.acessarURL(sUrl, str.toString(), null, TipoAcessoPayPal.POST, null, false, true, true);
         }
 
-        public <T> T acessoPATCH(String sUrl, Class<? extends RespostaPayPal> clazz, EnvioPayPal envio) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, AutorizacaoInvalidaException {
-                return this.acessarURL(sUrl, null, clazz, TipoAcessoPayPal.PATCH, envio != null ? JSonUtil.getJSon(envio) : null, false, false);
+        public <T> T acessoPOST(String sUrl, Class<? extends RespostaPayPal> clazz, EnvioPayPal envio) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, AutorizacaoInvalidaException {
+                return this.acessarURL(sUrl, null, clazz, TipoAcessoPayPal.POST, envio != null ? JSonUtil.getJSon(envio) : null, false, true, false);
+        }
+
+        public <T> T acessoPATCH(String sUrl, Class<? extends RespostaPayPal> clazz, EnvioPayPal[] envio) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, AutorizacaoInvalidaException {
+                return this.acessarURL(sUrl, null, clazz, TipoAcessoPayPal.PATCH, envio != null ? JSonUtil.getJSon(envio) : null, false, false, false);
         }
 
         public <T> T acessoPOSTToken(String sUrl, Class<? extends RespostaPayPal> clazz, String id, String secret) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, AutorizacaoInvalidaException {
-                return this.acessarURL(sUrl, null, clazz, TipoAcessoPayPal.POST, "grant_type=client_credentials", true, true);
+                return this.acessarURL(sUrl, null, clazz, TipoAcessoPayPal.POST, "grant_type=client_credentials", true, true, false);
         }
 
-        private <T> T acessarURL(String sUrl, String requestQuery, Class<? extends RespostaPayPal> clazz, TipoAcessoPayPal tipo, String envio, boolean gerarToken, boolean parseJSonRetorno) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, AutorizacaoInvalidaException {
+        private <T> T acessarURL(String sUrl, String requestQuery, Class<? extends RespostaPayPal> clazz, TipoAcessoPayPal tipo, String envio, boolean gerarToken, boolean parseJSonRetorno, boolean retornarDireto) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, AutorizacaoInvalidaException {
                 try {
                         URL url = new URL(sUrl + (StringUtils.isNotBlank(requestQuery) ? requestQuery : ""));
 
@@ -76,45 +88,12 @@ public class AcessoPayPal {
                         BufferedReader bufferedreader = null;
 
                         if (tipo.equals(TipoAcessoPayPal.PATCH)) {
-                                //CloseableHttpClient httpClient = HttpClients.createDefault();
-                                SSLContextBuilder builder = SSLContexts.custom();
-                                builder.loadTrustMaterial(null, new TrustStrategy() {
-                                        @Override
-                                        public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                                                return true;
-                                        }
-                                });
-                                SSLContext sslContext = builder.build();
-                                SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
-                                        sslContext, new X509HostnameVerifier() {
-                                                @Override
-                                                public void verify(String host, SSLSocket ssl) throws IOException {
-                                                }
-
-                                                @Override
-                                                public void verify(String host, X509Certificate cert) throws SSLException {
-                                                }
-
-                                                @Override
-                                                public void verify(String host, String[] cns, String[] subjectAlts) throws SSLException {
-                                                }
-
-                                                @Override
-                                                public boolean verify(String s, SSLSession sslSession) {
-                                                        return true;
-                                                }
-                                        }
-                                );
-
-                                Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create().register("https", sslsf).build();
-
-                                PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
-                                CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(cm).build();
-
-                                HttpPatch httpPatch = new HttpPatch(url.toURI());
+                                CloseableHttpClient httpClient = generateHttpClientWithProxyAuth(url.toString());
+                                HttpPatch httpPatch = generateHttpPatchWithProxy(url.toString());
                                 httpPatch.addHeader("Authorization", "Bearer " + APIConfigSingleton.get().getToken());
                                 httpPatch.addHeader("Content-Type", "application/json; charset=" + APIConfigSingleton.get().getCharset());
-                                httpPatch.setEntity(new SerializableEntity(envio, false));
+                                httpPatch.addHeader("Accept-Language", "pt_BR");
+                                httpPatch.setEntity(new StringEntity(envio, ContentType.APPLICATION_JSON));
 
                                 CloseableHttpResponse response = httpClient.execute(httpPatch);
                                 responseCode = response.getStatusLine().getStatusCode();
@@ -160,8 +139,6 @@ public class AcessoPayPal {
                                                 writer.write(envio);
                                                 writer.flush();
                                         }
-                                } else {
-                                        conn.setRequestProperty("Content-Type", "application/json; charset=" + APIConfigSingleton.get().getCharset());
                                 }
 
                                 try {
@@ -187,11 +164,15 @@ public class AcessoPayPal {
                         }
                         bufferedreader.close();
 
+                        if(retornarDireto){
+                                return (T) json;
+                        }
+                        
                         if (!parseJSonRetorno) {
                                 if (responseCode >= 200 && responseCode <= 204) {
                                         return (T) clazz.newInstance();
                                 } else {
-                                        ErrosPagSeguro erros = JSonUtil.getObject(json, ErrosPagSeguro.class);
+                                        ErroPayPal erros = JSonUtil.getObject(json, ErroPayPal.class);
                                         throw new ErrosRemotosPayPalException(erros);
                                 }
                         } else {
@@ -206,7 +187,7 @@ public class AcessoPayPal {
                                 }
 
                                 if (!resp.isValido()) {
-                                        ErrosPagSeguro erros = JSonUtil.getObject(json, ErrosPagSeguro.class);
+                                        ErroPayPal erros = JSonUtil.getObject(json, ErroPayPal.class);
                                         throw new ErrosRemotosPayPalException(erros);
                                 }
                                 return (T) resp;
@@ -216,7 +197,107 @@ public class AcessoPayPal {
                         throw new ProblemaGenericoAPIException(ex);
                 }
         }
+        
+        private static CloseableHttpClient generateHttpClientWithProxyAuth(String url) {
+		String proxyHost = getProxyHost();
+		String proxyPort = getProxyPort();
+		String proxyUser = getProxyUser();
+		String proxyPass = getProxyPass();
 
+		HttpClientBuilder builder = null;
+
+		if (proxyHost != null && proxyPass != null && proxyPort != null && proxyUser != null) {
+			builder = HttpClients.custom();
+			CredentialsProvider credsProvider = new BasicCredentialsProvider();
+			credsProvider.setCredentials(new AuthScope(proxyHost, Integer.valueOf(proxyPort)), new UsernamePasswordCredentials(proxyUser, proxyPass));
+			builder.setDefaultCredentialsProvider(credsProvider);
+		}
+
+		if (url.startsWith("https")) {
+			if (builder == null) {
+				builder = HttpClients.custom();
+			}
+			builder.setSSLSocketFactory( configureHttps() );
+		}
+
+		if (builder != null) {
+			return builder.build();
+		} else {
+			return HttpClients.createDefault();
+		}
+	}
+        
+        private static SSLConnectionSocketFactory configureHttps() {
+		try {
+
+			SSLContextBuilder builder = SSLContexts.custom();
+			builder.loadTrustMaterial(null, new TrustStrategy() {
+				@Override
+				public boolean isTrusted(X509Certificate[] chain, String authType)
+					throws CertificateException {
+					return true;
+				}
+			});
+
+			SSLContext sslContext = builder.build();
+			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
+
+			return sslsf;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+        
+        private static HttpPatch generateHttpPatchWithProxy(String url) {
+		String proxyHost = getProxyHost();
+		String proxyPort = getProxyPort();
+
+		HttpPatch ret = new HttpPatch(url);
+		addHeader(ret);
+		if (proxyHost != null && proxyPort != null) {
+			ret.setConfig(generateProxyConfig(proxyHost, proxyPort));
+		}
+		return ret;
+	}
+
+	private static void addHeader(HttpRequestBase base) {
+		RequestConfig.Builder requestConfig = RequestConfig.custom();
+		requestConfig.setConnectTimeout(30 * 1000);
+		requestConfig.setConnectionRequestTimeout(30 * 1000);
+		requestConfig.setSocketTimeout(30 * 1000);
+		base.setConfig(requestConfig.build());
+	}
+
+	private static RequestConfig generateProxyConfig(String proxyHost, String proxyPort) {
+		HttpHost proxy = new HttpHost(proxyHost, Integer.valueOf(proxyPort));
+		RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
+		return config;
+	}
+
+	private static String getProxyHost() {
+		return getProxyInfo("https.proxyHost", "http.proxyHost");
+	}
+
+	private static String getProxyPort() {
+		return getProxyInfo("https.proxyPort", "http.proxyPort");
+	}
+
+	private static String getProxyUser() {
+		return getProxyInfo("https.proxyUser", "http.proxyUser");
+	}
+
+	private static String getProxyPass() {
+		return getProxyInfo("https.proxyPass", "http.proxyPass");
+	}
+        
+        private static String getProxyInfo(String mainName, String altName) {
+		String info = System.getProperty(mainName);
+		if (altName != null && info == null) {
+			info = System.getProperty(altName);
+		}
+		return info;
+	}
+        
         public static enum TipoAcessoPayPal {
 
                 GET, POST, PATCH;

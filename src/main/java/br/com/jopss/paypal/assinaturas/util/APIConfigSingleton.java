@@ -73,6 +73,10 @@ public final class APIConfigSingleton {
 		return "https://api.paypal.com/v1/payments/billing-agreements/{dado}/agreement-execute";
 	}
         
+        private String getDefaultUrlVerificacaoNotificacao(){
+		return "https://www.paypal.com/cgi-bin/webscr?cmd=_notify-validate";
+	}
+        
 	public boolean proxyConfigurado(){
 		if(proxyPorta!=null && StringUtils.isNotBlank(proxyURI)){
 			return true;
@@ -214,6 +218,17 @@ public final class APIConfigSingleton {
 		}
                 urlFaturamento = urlFaturamento.replaceAll("\\{dado\\}", id);
 		return urlFaturamento;
+	}
+        
+	public String getUrlVerificacaoNotificacao() throws ConfiguracaoInvalidaException {
+		String urlVerificacaoNotificacao = this.getDefaultUrlVerificacaoNotificacao();
+		if (StringUtils.isBlank(urlVerificacaoNotificacao)) {
+			throw new ConfiguracaoInvalidaException("Configuração: urlVerificacaoNotificacao obrigatório.");
+		}
+		if(APIConfigSingleton.get().isTeste()){
+			urlVerificacaoNotificacao = urlVerificacaoNotificacao.replaceAll("api.paypal.com", "api.sandbox.paypal.com");
+		}
+		return urlVerificacaoNotificacao;
 	}
         
 	/**

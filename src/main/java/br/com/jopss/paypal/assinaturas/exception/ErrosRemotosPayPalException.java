@@ -1,25 +1,25 @@
 package br.com.jopss.paypal.assinaturas.exception;
 
-import br.com.jopss.paypal.assinaturas.modelos.ErrosPagSeguro;
+import br.com.jopss.paypal.assinaturas.modelos.ErroPayPal;
 
 /**
  * @author João Paulo Sossoloti.
  */
 public class ErrosRemotosPayPalException extends Exception {
 
-	private final ErrosPagSeguro errosPagSeguro;
+	private final ErroPayPal errosPayPal;
 	
-	public ErrosRemotosPayPalException(ErrosPagSeguro errosPagSeguro) {
+	public ErrosRemotosPayPalException(ErroPayPal errosPagSeguro) {
 		super(errosPagSeguro.toString());
-		this.errosPagSeguro = errosPagSeguro;
+		this.errosPayPal = errosPagSeguro;
 	}
 
 	public boolean contemErros(){
-		return errosPagSeguro !=null;
+		return errosPayPal !=null;
 	}
 	
-	public ErrosPagSeguro getErrosPagSeguro() {
-		return errosPagSeguro;
+	public ErroPayPal getErrosPayPal() {
+		return errosPayPal;
 	}
 	
 }

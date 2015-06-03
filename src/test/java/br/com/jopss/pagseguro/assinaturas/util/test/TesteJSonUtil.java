@@ -1,11 +1,13 @@
 package br.com.jopss.pagseguro.assinaturas.util.test;
 
 import br.com.jopss.paypal.assinaturas.exception.ProblemaGenericoAPIException;
+import br.com.jopss.paypal.assinaturas.modelos.EnvioAtivacao;
 import br.com.jopss.paypal.assinaturas.modelos.EnvioPreAprovacao;
-import br.com.jopss.paypal.assinaturas.modelos.ErrosPagSeguro;
+import br.com.jopss.paypal.assinaturas.modelos.ErroPayPal;
 import br.com.jopss.paypal.assinaturas.modelos.RespostaPreAprovacao;
 import br.com.jopss.paypal.assinaturas.modelos.enums.Moeda;
 import br.com.jopss.paypal.assinaturas.modelos.enums.Periodo;
+import br.com.jopss.paypal.assinaturas.modelos.enums.SituacaoFaturamento;
 import br.com.jopss.paypal.assinaturas.modelos.enums.TipoPreRequisicao;
 import br.com.jopss.paypal.assinaturas.modelos.suporte.DefinicaoPagamento;
 import br.com.jopss.paypal.assinaturas.modelos.suporte.PreferenciasComerciais;
@@ -39,7 +41,14 @@ public class TesteJSonUtil {
 		String json = JSonUtil.getJSon(preAprovacao);
 		assertNotNull(json);
 	}
-	
+        
+        @Test
+	public void objetoEnvioAtivacao() throws ProblemaGenericoAPIException{
+		String json = "[{\"path\": \"/\",\"value\": {\"state\": \"ACTIVE\"},\"op\": \"replace\"}]";
+		EnvioAtivacao[] envio = JSonUtil.getObject(json, EnvioAtivacao[].class);
+		assertNotNull(envio);
+	}
+        
 	@Test
 	public void jsonRespostaParaObjeto() throws ProblemaGenericoAPIException{
 		String json = "{\"id\":\"P-94458432VR012762KRWBZEUA\",\"state\":\"CREATED\",\"name\":\"T-Shirt of the Month Club Plan\",\"description\":\"Template creation.\",\"type\":\"FIXED\",\"payment_definitions\":[{\"id\":\"PD-50606817NF8063316RWBZEUA\",\"name\":\"Regular Payments\",\"type\":\"REGULAR\",\"frequency\":\"Month\",\"amount\":{\"currency\":\"USD\",\"value\":\"100\"},\"cycles\":\"12\",\"frequency_interval\":\"2\"}],\"merchant_preferences\":{\"setup_fee\":{\"currency\":\"USD\",\"value\":\"1\"},\"max_fail_attempts\":\"0\",\"return_url\":\"http://www.return.com\",\"cancel_url\":\"http://www.cancel.com\",\"auto_bill_amount\":\"YES\",\"initial_fail_amount_action\":\"CONTINUE\"},\"create_time\":\"2014-07-31T17:41:55.920Z\",\"update_time\":\"2014-07-31T17:41:55.920Z\",\"links\":[{\"href\":\"https://api.sandbox.paypal.com/v1/payments/billing-plans/P-94458432VR012762KRWBZEUA\",\"rel\":\"self\",\"method\":\"GET\"}]}";
@@ -50,7 +59,7 @@ public class TesteJSonUtil {
 	@Test
 	public void jsonRespostaComErroParaObjeto() throws ProblemaGenericoAPIException{
 		String json = "{\"name\":\"{ERROR NAME}\",\"message\":\"{Error description}\",\"information_link\":\"{Link to error documentation}\",\"details\":[{\"field\": \"merchant_preferences.notify_url\",\"issue\": \"Not valid to specify this field in a request\"}]}";
-		ErrosPagSeguro erros = JSonUtil.getObject(json, ErrosPagSeguro.class);
+		ErroPayPal erros = JSonUtil.getObject(json, ErroPayPal.class);
 		assertNotNull(erros);
 	}
         

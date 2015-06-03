@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, setterVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE)
-public class RespostaOK  implements RespostaPayPal {
+public class Resposta  implements RespostaPayPal {
 	
         @JsonIgnore
         private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
@@ -23,7 +23,7 @@ public class RespostaOK  implements RespostaPayPal {
 	/**
 	 * Construtor vazio necessario para formatacao automatica.
 	 */
-	public RespostaOK() {
+	public Resposta() {
 	}
         
         @Override

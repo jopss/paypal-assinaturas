@@ -1,5 +1,6 @@
 package br.com.jopss.paypal.assinaturas.modelos;
 
+import br.com.jopss.paypal.assinaturas.modelos.enums.LinkRel;
 import br.com.jopss.paypal.assinaturas.modelos.interfaces.RespostaPayPal;
 import br.com.jopss.paypal.assinaturas.modelos.suporte.AtomLink;
 import br.com.jopss.paypal.assinaturas.modelos.suporte.Plano;
@@ -25,9 +26,6 @@ public class RespostaContrato implements RespostaPayPal {
         @JsonIgnore
         private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
     
-        @JsonProperty("id")
-	private String id;
-        
         @JsonProperty("name")
 	private String nome;
 	
@@ -49,6 +47,15 @@ public class RespostaContrato implements RespostaPayPal {
 	public RespostaContrato() {
 	}
         
+        public String getLinkRedirecionamento(){
+                for(AtomLink link : acoes){
+                        if(link.getRel().equals(LinkRel.APPROVAL_URL)){
+                                return link.getHref();
+                        }
+                }
+                return null;
+        }
+        
         @Override
         public boolean isValido() {
                 return this.plano!=null && this.plano.getId()!=null && !this.plano.getId().trim().equalsIgnoreCase("");
@@ -60,10 +67,6 @@ public class RespostaContrato implements RespostaPayPal {
                 } catch (ParseException ex) {
                         throw new RuntimeException(ex);
                 }
-        }
-
-        public String getId() {
-                return id;
         }
 
         public String getNome() {

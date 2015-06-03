@@ -1,5 +1,6 @@
 package br.com.jopss.paypal.assinaturas.modelos.suporte;
 
+import br.com.jopss.paypal.assinaturas.modelos.enums.LinkRel;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -27,8 +28,9 @@ public class AtomLink {
 	 * Retorna o Rel do link da ação, ou seja, a descrição da ação.
 	 * @return String.
 	 */
-	public String getRel() {
-		return rel;
+	public LinkRel getRel() {
+                if(rel == null) return null;
+		return LinkRel.valueOf(rel.toUpperCase());
 	}
 
 	/**
