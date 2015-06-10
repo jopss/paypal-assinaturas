@@ -84,7 +84,7 @@ public class ErroPayPal implements RespostaPayPal {
         
         @Override
         public String toString() {
-                return "Erro{" + "nome=" + nome + ", mensagem=" + mensagem + '}';
+                return "Erro{" + "nome=" + (nome == null ? erro : nome) + ", mensagem=" + (mensagem == null ? descricaoErro : mensagem) + '}';
         }
 
         @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, setterVisibility = JsonAutoDetect.Visibility.NONE, getterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE)
