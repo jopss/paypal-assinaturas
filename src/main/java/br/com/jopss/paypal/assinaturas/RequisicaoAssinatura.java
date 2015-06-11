@@ -68,6 +68,10 @@ public final class RequisicaoAssinatura {
 		return new AcessoPayPal().acessoPOST( APIConfigSingleton.get().getUrlFaturamento(token), RespostaFaturamento.class );
 	}
         
+        public Resposta cancelar(String idFaturamento, String descricao) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, ConfiguracaoInvalidaException, AutorizacaoInvalidaException {
+		return new AcessoPayPal().acessoPOSTSemParseJSon( APIConfigSingleton.get().getUrlCancelamento(idFaturamento), Resposta.class, "{\"note\":\""+descricao+"\"}" );
+	}
+        
         public RetornoVerificacaoNotificacao verificacaoNotificacao(Map<String,String> valoresRequisicao) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, ConfiguracaoInvalidaException, AutorizacaoInvalidaException {
 		return RetornoVerificacaoNotificacao.valueOf( new AcessoPayPal().acessoPOSTComRequisicao( APIConfigSingleton.get().getUrlVerificacaoNotificacao(), valoresRequisicao ) );
 	}

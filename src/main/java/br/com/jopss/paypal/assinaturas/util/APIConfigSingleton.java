@@ -73,6 +73,10 @@ public final class APIConfigSingleton {
 		return "https://api.paypal.com/v1/payments/billing-agreements/{dado}/agreement-execute";
 	}
         
+        private String getDefaultUrlCancelamento(){
+		return "https://api.paypal.com/v1/payments/billing-agreements/{dado}/cancel";
+	}
+        
         private String getDefaultUrlVerificacaoNotificacao(){
 		return "https://www.paypal.com/cgi-bin/webscr?cmd=_notify-validate";
 	}
@@ -208,6 +212,18 @@ public final class APIConfigSingleton {
 		return urlAtivamento;
 	}
         
+        public String getUrlCancelamento(String id) throws ConfiguracaoInvalidaException {
+		String urlCancelamento = this.getDefaultUrlCancelamento();
+		if (StringUtils.isBlank(urlCancelamento)) {
+			throw new ConfiguracaoInvalidaException("Configuração: urlCancelamento obrigatório.");
+		}
+		if(APIConfigSingleton.get().isTeste()){
+			urlCancelamento = urlCancelamento.replaceAll("api.paypal.com", "api.sandbox.paypal.com");
+		}
+                urlCancelamento = urlCancelamento.replaceAll("\\{dado\\}", id);
+		return urlCancelamento;
+	}
+                
 	public String getUrlFaturamento(String id) throws ConfiguracaoInvalidaException {
 		String urlFaturamento = this.getDefaultUrlFaturamento();
 		if (StringUtils.isBlank(urlFaturamento)) {

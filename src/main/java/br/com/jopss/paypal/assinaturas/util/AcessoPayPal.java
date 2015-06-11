@@ -67,6 +67,10 @@ public class AcessoPayPal {
                 return this.acessarURL(sUrl, str.toString(), null, TipoAcessoPayPal.POST, null, false, true, true);
         }
 
+        public <T> T acessoPOSTSemParseJSon(String sUrl, Class<? extends RespostaPayPal> clazz, String envio) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, AutorizacaoInvalidaException {
+                return this.acessarURL(sUrl, null, clazz, TipoAcessoPayPal.POST, envio, false, false, false);
+        }
+        
         public <T> T acessoPOST(String sUrl, Class<? extends RespostaPayPal> clazz, EnvioPayPal envio) throws ProblemaGenericoAPIException, ErrosRemotosPayPalException, AutorizacaoInvalidaException {
                 return this.acessarURL(sUrl, null, clazz, TipoAcessoPayPal.POST, envio != null ? JSonUtil.getJSon(envio) : null, false, true, false);
         }
