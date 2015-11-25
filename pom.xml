@@ -27,7 +27,8 @@
         <scm>
                 <connection>scm:git:https://github.com/jopss/paypal-assinaturas.git</connection>
                 <developerConnection>scm:git:https://github.com/jopss/paypal-assinaturas.git</developerConnection>
-                <url>https://github.com/jopss/paypal-assinaturas.git</url>
+                <url>https://github.com/jopss/paypal-assinaturas</url>
+                <tag>HEAD</tag>
         </scm>
 
         <developers>
@@ -75,13 +76,6 @@
                                 <configuration>
                                         <pushChanges>false</pushChanges>
                                 </configuration>
-                                <dependencies>
-                                        <dependency>
-                                                <groupId>org.apache.maven.plugins</groupId>
-                                                <artifactId>maven-scm-plugin</artifactId>
-                                                <version>1.9.4</version>
-                                        </dependency>
-                                </dependencies>
                         </plugin>
                 </plugins>
         </build>
