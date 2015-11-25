@@ -6,43 +6,43 @@
         <version>1.0-SNAPSHOT</version>
         <packaging>jar</packaging>
 		
-		<!-- conf obrigatoria para o Sonatype OSS -->
-		<parent>
-			<groupId>org.sonatype.oss</groupId>
-			<artifactId>oss-parent</artifactId>
-			<version>7</version>
-		</parent>
+        <!-- conf obrigatoria para o Sonatype OSS -->
+        <parent>
+                <groupId>org.sonatype.oss</groupId>
+                <artifactId>oss-parent</artifactId>
+                <version>7</version>
+        </parent>
 
-		<name>paypal-assinaturas</name>
-		<description>API em Java para integração com o PayPal sobre assinaturas recorrentes.</description>
-		<url>https://github.com/jopss/paypal-assinaturas</url>
+        <name>paypal-assinaturas</name>
+        <description>API em Java para integração com o PayPal sobre assinaturas recorrentes.</description>
+        <url>https://github.com/jopss/paypal-assinaturas</url>
 
-		<licenses>
-			<license>
-				<name>Mozilla Public License, Version 2.0</name>
-				<url>http://www.mozilla.org/MPL/2.0/index.txt</url>
-			</license>
-		</licenses>
+        <licenses>
+                <license>
+                        <name>Mozilla Public License, Version 2.0</name>
+                        <url>http://www.mozilla.org/MPL/2.0/index.txt</url>
+                </license>
+        </licenses>
 	
-		<scm>
-			<connection>scm:git:https://github.com/jopss/paypal-assinaturas.git</connection>
-			<developerConnection>scm:git:https://github.com/jopss/paypal-assinaturas.git</developerConnection>
-			<url>https://github.com/jopss/paypal-assinaturas.git</url>
-		</scm>
+        <scm>
+                <connection>scm:git:https://github.com/jopss/paypal-assinaturas.git</connection>
+                <developerConnection>scm:git:https://github.com/jopss/paypal-assinaturas.git</developerConnection>
+                <url>https://github.com/jopss/paypal-assinaturas.git</url>
+        </scm>
 
-		<developers>
-			<developer>
-				<id>jopss</id>
-				<name>Joao Paulo Sossoloti</name>
-				<email>jopss.sossoloti@gmail.com</email>
-				<roles>
-					<role>project owner</role>
-					<role>administrator</role>
-					<role>developer</role>
-				</roles>
-				<timezone>-3</timezone>
-			</developer>
-		</developers>
+        <developers>
+                <developer>
+                        <id>jopss</id>
+                        <name>Joao Paulo Sossoloti</name>
+                        <email>jopss.sossoloti@gmail.com</email>
+                        <roles>
+                                <role>project owner</role>
+                                <role>administrator</role>
+                                <role>developer</role>
+                        </roles>
+                        <timezone>-3</timezone>
+                </developer>
+        </developers>
 
         <properties>
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -50,34 +50,41 @@
                 <maven.compiler.target>1.7</maven.compiler.target>
         </properties>
     
-		<build>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.3.2</version>
-					<configuration>
-						<encoding>${project.build.sourceEncoding}</encoding>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-resources-plugin</artifactId>
-					<version>2.4.3</version>
-					<configuration>
-						<encoding>${project.build.sourceEncoding}</encoding>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-release-plugin</artifactId>
-					<version>2.5.3</version>
-					<configuration>
-						<pushChanges>false</pushChanges>
-					</configuration>
-				</plugin>
-			</plugins>
-		</build>
+        <build>
+                <plugins>
+                        <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-compiler-plugin</artifactId>
+                                <version>2.3.2</version>
+                                <configuration>
+                                        <encoding>${project.build.sourceEncoding}</encoding>
+                                </configuration>
+                        </plugin>
+                        <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-resources-plugin</artifactId>
+                                <version>2.4.3</version>
+                                <configuration>
+                                        <encoding>${project.build.sourceEncoding}</encoding>
+                                </configuration>
+                        </plugin>
+                        <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-release-plugin</artifactId>
+                                <version>2.5.3</version>
+                                <configuration>
+                                        <pushChanges>false</pushChanges>
+                                </configuration>
+                                <dependencies>
+                                        <dependency>
+                                                <groupId>org.apache.maven.plugins</groupId>
+                                                <artifactId>maven-scm-plugin</artifactId>
+                                                <version>1.9.4</version>
+                                        </dependency>
+                                </dependencies>
+                        </plugin>
+                </plugins>
+        </build>
 	
         <dependencies>
                 <dependency>
