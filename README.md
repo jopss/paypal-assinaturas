@@ -23,4 +23,4 @@ Ainda nao... :()
 Status
 ------
 
-Em construção e testes... (não há release).
+DESENVOLVIMENTO PARADO. Por conta de problemas na integração, e as ausencias de respostas no Forum do PagSeguro, não foi possível continuar este projeto... :(
