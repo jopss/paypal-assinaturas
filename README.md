@@ -29,40 +29,40 @@ Cadastrando um Pagamento Recorrente
 		Date dataInicial = new DateTime().plusMonths(1).toDate(); //daqui a 30 dias.
 	                
 		DefinicaoPagamento definicao = new DefinicaoPagamento(100.0, Moeda.BRL);
-	        definicao.setCiclos(12);
-	        definicao.setFrequencia(Periodo.MONTH);
-	        definicao.setIntervaloFrequencia(1);
-	        definicao.setNome("Assinatura Gold");
-	        definicao.setIndicaPeriodoDeTeste(false);
+		definicao.setCiclos(12);
+		definicao.setFrequencia(Periodo.MONTH);
+		definicao.setIntervaloFrequencia(1);
+		definicao.setNome("Assinatura Gold");
+		definicao.setIndicaPeriodoDeTeste(false);
 	
-	        PreferenciasComerciais preferencias = new PreferenciasComerciais();
-	        preferencias.setContinuarAcaoAoFalharPagamentoInicial(false);
-	        preferencias.setQtdMaximaTentativas(0);
-	        preferencias.setUrlCancelar("http://meusistema/pagamento/cancelar");
-	        preferencias.setUrlRetorno("http://meusistema/pagamento/callback");
-	        preferencias.setValorInicialDiferenciado(20.0, Moeda.BRL);
+		PreferenciasComerciais preferencias = new PreferenciasComerciais();
+		preferencias.setContinuarAcaoAoFalharPagamentoInicial(false);
+		preferencias.setQtdMaximaTentativas(0);
+		preferencias.setUrlCancelar("http://meusistema/pagamento/cancelar");
+		preferencias.setUrlRetorno("http://meusistema/pagamento/callback");
+		preferencias.setValorInicialDiferenciado(20.0, Moeda.BRL);
 	
-	        StringBuilder strDescricao = new StringBuilder();
-	        strDescricao.append("Assinatura Gold com ");
+		StringBuilder strDescricao = new StringBuilder();
+		strDescricao.append("Assinatura Gold com ");
 		strDescricao.append("pagamento inicial (à vista): ");
 		strDescricao.append("1x de R$ 20,00. ");
-	        strDescricao.append("Mensalidade: ");
-	        strDescricao.append("12x de R$ 100,00. ");
+		strDescricao.append("Mensalidade: ");
+		strDescricao.append("12x de R$ 100,00. ");
 	                
-	        EnvioPreAprovacao preAprovacao = new EnvioPreAprovacao(definicao, preferencias);
-	        preAprovacao.setDescricao(strDescricao.toString());
-	        preAprovacao.setNome("Assinatura Gold");
-	        preAprovacao.setTipo(TipoPreRequisicao.FIXED);
+		EnvioPreAprovacao preAprovacao = new EnvioPreAprovacao(definicao, preferencias);
+		preAprovacao.setDescricao(strDescricao.toString());
+		preAprovacao.setNome("Assinatura Gold");
+		preAprovacao.setTipo(TipoPreRequisicao.FIXED);
 	
 		//pode-se configurar proxy de rede.
-	        PayPalAPI.instance().config().setId("seu-token").setSecret("sua-senha").indicaAmbienteReal();
-	        PayPalAPI.instance().seguranca().gerarToken();
+		PayPalAPI.instance().config().setId("seu-token").setSecret("sua-senha").indicaAmbienteReal();
+		PayPalAPI.instance().seguranca().gerarToken();
 	        
-	        RespostaPreAprovacao respostaPreAprovacao = PayPalAPI.instance().assinatura().preAprovacao(preAprovacao);
-	        PayPalAPI.instance().assinatura().ativarAprovacao(respostaPreAprovacao);
-	        RespostaContrato respostaContrato = PayPalAPI.instance().assinatura().contrato(new EnvioContrato(preAprovacao, dataInicial, respostaPreAprovacao));
+		RespostaPreAprovacao respostaPreAprovacao = PayPalAPI.instance().assinatura().preAprovacao(preAprovacao);
+		PayPalAPI.instance().assinatura().ativarAprovacao(respostaPreAprovacao);
+		RespostaContrato respostaContrato = PayPalAPI.instance().assinatura().contrato(new EnvioContrato(preAprovacao, dataInicial, respostaPreAprovacao));
 	
-	        PayPalAPI.instance().assinatura().redirecionarURLPagamento(response, respostaContrato);
+		 PayPalAPI.instance().assinatura().redirecionarURLPagamento(response, respostaContrato);
 	}
 	
 	
@@ -77,7 +77,7 @@ Utilizando Spring MVC. Esta URL foi passada no passo anterior, no método 'setUr
 
                 try {
                         PayPalAPI.instance().config().setId("seu-token").setSecret("sua-senha").indicaAmbienteReal();
-	        	PayPalAPI.instance().seguranca().gerarToken();
+			PayPalAPI.instance().seguranca().gerarToken();
 	        	
                         RespostaFaturamento respostaFaturamento = PayPalAPI.instance().assinatura().faturamento(codigoFaturamento);
                         String code = respostaFaturamento.getId();
